@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Clínica Aurora · Dental & Estética — Demo interactiva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0E3A3A; --navy-2:#15514E; --navy-3:#1a5f5b;
+  --gold:#C9A24B; --gold-2:#e0bd6e; --gold-soft:#F2E6C8;
+  --azul:#2563EB; --azul-soft:#EFF6FF;
+  --rojo:#D94040; --rojo-soft:#FDEAEA;
+  --wa:#25D366; --verde-ok:#1f9d57;
+  --g-borde:#E8EBEF; --g-fondo:#F5F1EA; --g:#6B7785; --g-med:#374151; --g-osc:#0c2a28;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:'Inter','DM Sans',-apple-system,sans-serif}
+html,body{height:100%}
+body{background:#06140f;color:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:100dvh;position:relative}
+#amb{position:fixed;inset:0;z-index:0;background:radial-gradient(70% 50% at 50% -8%,#2d7a72 0%,#0E3A3A 42%,#06140f 78%);overflow:hidden}
+#amb::before,#amb::after{content:"";position:absolute;border-radius:50%;filter:blur(70px);opacity:.5}
+#amb::before{width:420px;height:420px;left:-120px;top:8%;background:radial-gradient(circle,#2d7a72,transparent 70%);animation:float1 14s ease-in-out infinite}
+#amb::after{width:360px;height:360px;right:-110px;bottom:6%;background:radial-gradient(circle,#c9a24b55,transparent 70%);animation:float2 17s ease-in-out infinite}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-26px)}}
+#stage{position:relative;z-index:1;width:100%;max-width:430px;height:100dvh;max-height:920px;display:flex;flex-direction:column;padding:14px 14px 12px}
+
+/* Jarvis bar */
+.jbar{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:10px 12px;backdrop-filter:blur(8px);min-height:74px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.javatar{width:50px;height:50px;flex:0 0 50px;border-radius:50%;background:linear-gradient(150deg,var(--gold) 0%,#e0bd6e 60%,#fbf3da 100%);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(201,162,75,.4);transition:box-shadow .4s}
+.javatar.talk{animation:breathe 1.7s ease-in-out infinite;box-shadow:0 0 0 4px rgba(201,162,75,.25),0 6px 22px rgba(201,162,75,.6)}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.jmeta{flex:1;min-width:0}
+.jname{font-weight:800;font-size:14px;letter-spacing:.2px}
+.jname b{color:var(--gold-2)}
+.jstate{font-size:11.5px;color:#9fb4c6;display:flex;align-items:center;gap:6px;margin-top:1px}
+.wave{display:flex;gap:3px;align-items:flex-end;height:13px}
+.wave span{width:3px;height:5px;background:var(--gold-2);border-radius:2px;opacity:.45}
+.wave.on span{animation:wv .9s ease-in-out infinite}
+.wave.on span:nth-child(2){animation-delay:.12s}.wave.on span:nth-child(3){animation-delay:.24s}.wave.on span:nth-child(4){animation-delay:.36s}.wave.on span:nth-child(5){animation-delay:.48s}
+@keyframes wv{0%,100%{height:4px}50%{height:13px}}
+.jmute{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#cfe0ee;font-size:16px;cursor:pointer}
+
+.bubble{margin:11px 2px 0;background:#fff;color:var(--navy);border-radius:17px 17px 17px 5px;padding:13px 16px;font-size:14.5px;line-height:1.52;font-weight:500;min-height:30px;box-shadow:0 12px 34px rgba(0,0,0,.28);animation:bub .35s ease}
+@keyframes bub{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bubble.empty{opacity:0;height:0;min-height:0;padding:0;margin:0;overflow:hidden}
+.bubble .adv{display:inline-block;margin-top:8px;background:var(--gold-soft);color:#7a611a;border:1px solid #ecd9a0;border-radius:9px;padding:5px 10px;font-size:12.5px;font-weight:700}
+
+.phonewrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;margin-top:9px}
+.phone{width:100%;max-width:332px;height:100%;max-height:640px;background:#06140f;border-radius:42px;border:10px solid #04100c;box-shadow:0 30px 70px rgba(0,0,0,.6),inset 0 0 0 2px #15403c;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.statusbar{flex:0 0 auto;height:30px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:relative}
+.statusbar .t{font-size:12px;font-weight:700;color:#fff;letter-spacing:.3px}
+.statusbar .ic{font-size:11px;color:#fff;letter-spacing:2px}
+.island{position:absolute;left:50%;top:7px;transform:translateX(-50%);width:78px;height:17px;background:#000;border-radius:11px}
+.scr{flex:1;overflow:hidden;position:relative;background:var(--g-fondo);display:flex;flex-direction:column}
+.scr.navy{background:radial-gradient(120% 72% at 50% 0,#1c5450 0,#0E3A3A 58%,#0a2e2c 100%)}
+.fade{animation:fade .6s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+.appbar{background:var(--navy);color:#fff;padding:11px 14px 12px;display:flex;align-items:center;gap:9px;flex:0 0 auto}
+.logo-img{height:30px;width:auto;border-radius:7px;display:block;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.appbar .t{font-weight:800;font-size:14.5px;line-height:1.1}
+.appbar .s{font-size:10px;color:#9fb4c6}
+.rolechip{margin-left:auto;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;background:rgba(201,162,75,.2);color:#e0bd6e;border:1px solid rgba(201,162,75,.42);padding:3px 9px;border-radius:999px}
+.body{flex:1;overflow-y:auto;padding:13px;color:var(--g-osc)}
+.nav{flex:0 0 auto;background:#fff;border-top:1px solid var(--g-borde);display:flex;justify-content:space-around;padding:7px 4px 10px}
+.nav div{font-size:9.5px;color:var(--g);display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:600}
+.nav div b{font-size:18px;font-weight:400}
+.nav div.act{color:var(--navy)}
+
+.card{background:#fff;border:1px solid var(--g-borde);border-radius:16px;padding:13px;margin-bottom:11px;box-shadow:0 1px 2px rgba(20,30,45,.04)}
+.h{font-weight:800;color:var(--navy);font-size:15px}
+.sub{color:var(--g);font-size:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.btn{background:var(--navy);color:#fff;border:none;border-radius:13px;padding:13px;font-weight:800;font-size:14px;width:100%;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 16px rgba(28,43,58,.22)}
+.btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold-2));box-shadow:0 6px 16px rgba(201,162,75,.34)}
+.btn.green{background:var(--verde-ok);box-shadow:0 6px 16px rgba(31,157,87,.28)}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--g-borde);box-shadow:none}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--g-fondo);border:1px solid var(--g-borde);border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;color:var(--g-med)}
+.pill.gold{background:var(--gold-soft);border-color:#ecd9a0;color:#7a611a}
+.pill.ok{background:#e9f7ef;border-color:#bfe6cf;color:#1f7a48}
+.pill.red{background:var(--rojo-soft);border-color:#f2c2c2;color:#b53030}
+.pill.blue{background:var(--azul-soft);border-color:#cfe0fb;color:#1e4fc4}
+.tag{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--gold)}
+.line{height:1px;background:var(--g-borde);margin:9px 0}
+.hot.armed{outline:3px solid var(--gold);outline-offset:3px;border-radius:14px;animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(201,162,75,.5)}70%{box-shadow:0 0 0 14px rgba(201,162,75,0)}100%{box-shadow:0 0 0 0 rgba(201,162,75,0)}}
+.taphint{position:absolute;z-index:6;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#fff;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.35);pointer-events:none;white-space:nowrap;animation:bob 1s ease-in-out infinite;top:-13px;right:6px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+.ctrls{display:flex;align-items:center;gap:11px;margin-top:11px}
+.pwrap{flex:1;min-width:0}
+.plabel{display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;color:#9fb4c6;margin-bottom:5px;letter-spacing:.3px}
+.plabel b{color:var(--gold-2);text-transform:uppercase;letter-spacing:.6px}
+.pbar{height:5px;background:rgba(255,255,255,.13);border-radius:4px;overflow:hidden}
+.pbar i{display:block;height:100%;width:5%;background:linear-gradient(90deg,var(--gold),var(--gold-2));border-radius:4px;transition:width .5s cubic-bezier(.22,.61,.36,1)}
+.next{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#fff;border:none;border-radius:13px;padding:11px 17px;font-weight:800;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 8px 22px rgba(201,162,75,.4);white-space:nowrap}
+.restart{background:rgba(255,255,255,.05);color:#9fb4c6;border:1px solid rgba(255,255,255,.16);border-radius:11px;padding:10px 12px;font-weight:700;font-size:14px;cursor:pointer}
+
+#intro{position:absolute;inset:0;z-index:30;background:radial-gradient(120% 80% at 50% 0,#1c5450,#082420 72%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}
+#intro .big{width:96px;height:96px;border-radius:50%;background:linear-gradient(150deg,var(--gold),#fbf3da);display:flex;align-items:center;justify-content:center;font-size:50px;box-shadow:0 0 0 6px rgba(201,162,75,.18),0 12px 40px rgba(201,162,75,.5);margin-bottom:18px;animation:breathe 2.4s infinite}
+#intro .kick{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px}
+#intro h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:9px}
+#intro h1 b{color:var(--gold-2)}
+#intro p{color:#aebccb;font-size:13.5px;max-width:285px;line-height:1.5;margin-bottom:22px}
+#intro .start{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#0c2a28;border:none;border-radius:14px;padding:15px 30px;font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 12px 34px rgba(201,162,75,.5)}
+#intro .small{font-size:11px;color:#7d92a5;margin-top:16px}
+
+/* session card */
+.sescard{flex:1;display:flex;flex-direction:column;justify-content:center;padding:30px 26px;color:#fff;position:relative}
+.sescard .no{font-size:60px;font-weight:900;line-height:.9;color:transparent;-webkit-text-stroke:1.5px rgba(201,162,75,.55);letter-spacing:-2px}
+.sescard .gl{width:42px;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold-2));border-radius:3px;margin:16px 0 13px}
+.sescard h2{font-size:25px;font-weight:800;line-height:1.15;letter-spacing:-.3px}
+.sescard p{color:#9fb4c6;font-size:13.5px;line-height:1.5;margin-top:9px;max-width:240px}
+.sescard .badge{position:absolute;top:20px;right:20px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#e0bd6e;border:1px solid rgba(201,162,75,.4);background:rgba(201,162,75,.14);padding:4px 10px;border-radius:999px}
+
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.kpi .k{background:#fff;border:1px solid var(--g-borde);border-radius:14px;padding:11px;box-shadow:0 1px 2px rgba(20,30,45,.04)}
+.kpi .k .v{font-size:19px;font-weight:800;color:var(--navy)}
+.kpi .k .l{font-size:10.5px;color:var(--g);font-weight:600}
+.bars{display:flex;align-items:flex-end;gap:7px;height:70px;margin-top:6px}
+.bars i{flex:1;background:linear-gradient(var(--gold),#e0bd6e);border-radius:5px 5px 0 0;min-height:8px}
+.dot-line{display:flex;gap:7px;margin:11px 0;justify-content:center}
+.dot-line .pd{width:14px;height:14px;border-radius:50%;border:2px solid #9fb4c6;transition:.15s}
+.dot-line .pd.f{background:var(--gold);border-color:var(--gold);transform:scale(1.12)}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.keys button{background:#fff;border:1px solid var(--g-borde);border-radius:11px;padding:11px 0;font-size:17px;font-weight:700;color:var(--navy)}
+.fld{background:#fff;border:1.5px solid var(--g-borde);border-radius:11px;padding:11px 12px;font-size:13px;color:var(--g-med);margin-bottom:6px}
+.mic{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-2));display:flex;align-items:center;justify-content:center;font-size:33px;margin:6px auto;box-shadow:0 0 0 8px rgba(201,162,75,.13),0 10px 28px rgba(201,162,75,.4)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg b{background:#fff;border:1px solid var(--g-borde);border-radius:9px;padding:8px 10px;font-size:11.5px;font-weight:700;color:var(--g-med)}
+.seg b.on{background:var(--gold-soft);border-color:#ecd9a0;color:#7a611a}
+.toast{position:absolute;left:12px;right:12px;bottom:12px;background:var(--wa);color:#fff;border-radius:13px;padding:11px 13px;font-size:12.5px;font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.32);display:flex;gap:8px;align-items:center;animation:slideup .45s ease}
+@keyframes slideup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.prog{height:8px;background:var(--g-fondo);border-radius:5px;overflow:hidden;margin-top:6px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#e0bd6e)}
+.timeline{display:flex;align-items:center;gap:4px;margin:10px 0}
+.timeline .st{flex:1;text-align:center;font-size:9px;font-weight:700;color:var(--g)}
+.timeline .dotp{width:13px;height:13px;border-radius:50%;background:var(--g-borde);margin:0 auto 4px}
+.timeline .st.on .dotp{background:var(--gold)}
+.timeline .st.on{color:var(--gold)}
+.trust{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.trust span{font-size:10.5px;font-weight:700;color:#cfe0ee;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:5px 9px}
+.impact{flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px 22px;color:#fff}
+.impact .kick{font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#e0bd6e;margin-bottom:11px}
+.impact .lead{font-size:14.5px;color:#cdd9e4;font-weight:600;line-height:1.4}
+.bignum{font-size:44px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;margin:7px 0 3px}
+.bignum.gold{color:#e0bd6e}
+.impact .unit{font-size:13px;color:#9fb4c6;font-weight:700}
+.cmp{display:flex;gap:10px;margin-top:14px}
+.cmp .c{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:11px}
+.cmp .cl{font-size:11px;color:#9fb4c6;font-weight:700;margin-bottom:7px}
+.cmp .track{height:8px;background:rgba(255,255,255,.12);border-radius:5px;overflow:hidden}
+.cmp .track i{display:block;height:100%;width:0;border-radius:5px}
+.brk{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.brk span{font-size:12px;font-weight:700;color:#e6edf3;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 11px}
+.fnote{font-size:10px;color:#7d92a5;margin-top:13px;line-height:1.45}
+.life{flex:1;position:relative;overflow:hidden;background:#082420}
+.lp{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
+.lp.on{opacity:1}
+.lifeveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,25,36,.22) 0%,rgba(14,25,36,.42) 45%,rgba(14,25,36,.95) 100%)}
+.lifetext{position:absolute;left:0;right:0;bottom:0;padding:20px 22px 26px;color:#fff}
+@media(max-height:720px){.phone{max-height:560px}.bubble{font-size:13.5px}.bignum{font-size:38px}}
+.logo-mark{width:32px;height:32px;flex:0 0 auto;border-radius:50%;background:linear-gradient(150deg,var(--gold),#e0bd6e);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:17px;box-shadow:0 2px 8px rgba(201,162,75,.45)}
+.h,#intro h1,.sescard h2,.bignum,.appbar .t{font-family:'Playfair Display',Georgia,serif}
+</style>
+</head>
+<body>
+<div id="amb"></div>
+<div id="stage">
+  <div class="jbar">
+    <div class="javatar" id="jav">✨</div>
+    <div class="jmeta">
+      <div class="jname"><b>Aurora</b> · tu guía</div>
+      <div class="jstate"><span id="jstate">listo</span>
+        <span class="wave" id="wave"><span></span><span></span><span></span><span></span><span></span></span>
+      </div>
+    </div>
+    <button class="jmute" id="mute" title="Silenciar voz">🔊</button>
+  </div>
+  <div class="bubble empty" id="bubble"></div>
+  <div class="phonewrap">
+    <div class="phone">
+      <div class="statusbar"><span class="t">9:41</span><div class="island"></div><span class="ic">5G ▦ 100%</span></div>
+      <div class="scr" id="scr"></div>
+      <div id="intro">
+        <div class="big">✨</div>
+        <div class="kick">Clínica Aurora · Dental &amp; Estética</div>
+        <h1>Tu mejor versión<br>empieza <b>aquí</b>.</h1>
+        <p>Te lo enseño en 60 segundos. Yo te guío con la voz — tú solo toca cuando te lo pida.</p>
+        <button class="start" id="startBtn">Comenzar el tour ✨</button>
+        <div class="small">Con sonido · ~90 seg · hecho a medida</div>
+      </div>
+    </div>
+  </div>
+  <div class="ctrls">
+    <button class="restart" id="restart" title="Reiniciar">↺</button>
+    <div class="pwrap"><div class="plabel"><b id="psession">Bienvenida</b><span id="pcount">0 / 0</span></div><div class="pbar"><i id="pfill"></i></div></div>
+    <button class="next" id="next">Siguiente ▸</button>
+  </div>
+</div>
+
+<script>
+var LOGO_JAO='';
+var LOGO_BAR='<span class="logo-mark">A</span>';
+var LOGO_BIG='<img src="'+LOGO_JAO+'" alt="JAO" style="height:66px;border-radius:14px;margin-bottom:8px;box-shadow:0 6px 18px rgba(0,0,0,.35)">';
+
+/* ===== VOZ ===== */
+var muted=false, voice=null;
+function loadVoices(){
+  var vs=speechSynthesis.getVoices(); if(!vs.length) return;
+  var prefer=['Mónica','Monica','Paulina','Marisol','Google español de Estados Unidos','Google español','Microsoft Helena','Microsoft Sabina','Microsoft Laura','Jimena','Lucía','Lucia'];
+  for(var i=0;i<prefer.length;i++){var v=vs.find(function(x){return x.name.indexOf(prefer[i])>-1;}); if(v){voice=v;break;}}
+  if(!voice) voice=vs.find(function(x){return x.lang&&x.lang.toLowerCase().indexOf('es')===0;})||vs[0];
+}
+loadVoices(); if(speechSynthesis.onvoiceschanged!==undefined) speechSynthesis.onvoiceschanged=loadVoices;
+var jav=document.getElementById('jav'),wave=document.getElementById('wave'),jstate=document.getElementById('jstate');
+function talking(on){ jav.classList.toggle('talk',on); wave.classList.toggle('on',on); jstate.textContent=on?'hablando…':'listo'; }
+function speak(text, cb){
+  var plain=(text||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+  if(muted||!('speechSynthesis' in window)){ talking(true); var ms=Math.min(8500,1200+plain.length*46); return setTimeout(function(){talking(false); cb&&cb();},ms); }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  var u=new SpeechSynthesisUtterance(plain);
+  if(voice){u.voice=voice;u.lang=voice.lang;} else {u.lang='es-ES';}
+  u.rate=0.88; u.pitch=1.05; u.volume=1;
+  var done=false; var fin=function(){ if(done)return; done=true; clearTimeout(g); talking(false); cb&&cb(); };
+  u.onstart=function(){talking(true);}; u.onend=fin; u.onerror=fin;
+  var g=setTimeout(fin, Math.min(15000,1800+plain.length*78));
+  speechSynthesis.speak(u);
+}
+/* ===== VOZ PRE-GRABADA (Ximena) con respaldo al navegador ===== */
+var voxEl=new Audio(); voxEl.preload='auto';
+function playLine(idx, text, cb){
+  if(muted){ talking(true); var ms=Math.min(9000,1200+(text||'').replace(/<[^>]+>/g,'').length*46); return setTimeout(function(){talking(false); cb&&cb();},ms); }
+  var done=false, started=false;
+  var clear=function(){ voxEl.onended=null; voxEl.onerror=null; voxEl.onplaying=null; };
+  var fin=function(){ if(done)return; done=true; clear(); talking(false); cb&&cb(); };
+  var fallback=function(){ if(done||started)return; done=true; clear(); speak(text, cb); };
+  try{ speechSynthesis.cancel(); }catch(e){}
+  try{ voxEl.pause(); }catch(e){}
+  voxEl.onplaying=function(){ started=true; talking(true); };
+  voxEl.onended=fin;
+  voxEl.onerror=fallback;
+  try{
+    voxEl.src='voz/'+idx+'.mp3'; voxEl.currentTime=0;
+    var p=voxEl.play();
+    if(p&&p.catch) p.catch(function(){ fallback(); });
+  }catch(e){ fallback(); }
+}
+document.getElementById('mute').onclick=function(){ muted=!muted; this.textContent=muted?'🔇':'🔊'; if(muted){try{speechSynthesis.cancel();}catch(e){} try{voxEl.pause();}catch(e){} talking(false);} };
+
+var bubble=document.getElementById('bubble');
+function say(text, adv){ bubble.classList.remove('empty'); bubble.classList.remove('bubble'); void bubble.offsetWidth; bubble.classList.add('bubble'); bubble.innerHTML=text + (adv?('<br><span class="adv">💡 '+adv+'</span>'):''); }
+
+/* ===== PANTALLAS ===== */
+function appShell(title, sub, bodyHTML, navAct, role){
+  var emp=[['🏠','Inicio'],['🕒','Fichar'],['🎙️','Voz'],['📞','Equipo'],['👤','Perfil']];
+  var adm=[['📊','Panel'],['📋','Partes'],['🧾','Facturas'],['📦','Almacén'],['⋯','Más']];
+  var items=[['🏠','Inicio'],['🦷','Tratam.'],['✨','Resultados'],['📅','Cita'],['👤','Perfil']];
+  var nav=items.map(function(it,i){return '<div class="'+(i===navAct?'act':'')+'"><b>'+it[0]+'</b>'+it[1]+'</div>';}).join('');
+  var chip='Paciente';
+  return '<div class="appbar">'+LOGO_BAR+'<div><div class="t">'+title+'</div><div class="s">'+sub+'</div></div><span class="rolechip">'+chip+'</span></div>'+
+         '<div class="body">'+bodyHTML+'</div><div class="nav">'+nav+'</div>';
+}
+function loginScreen(label){
+  return '<div class="body" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:16px">'+
+    LOGO_BIG+
+    '<div style="font-weight:800;font-size:17px;color:#fff">JAO Proyectos NM SL</div>'+
+    '<div style="font-size:10.5px;color:#9fb4c6;margin-bottom:6px">Construcción · Reformas · Electricidad</div>'+
+    '<span class="pill gold" style="margin-bottom:12px">Entras como: '+label+'</span>'+
+    '<div class="card" style="width:100%;text-align:left">'+
+      '<div class="h">Acceso al sistema</div><div class="sub" style="margin-bottom:9px">Correo corporativo + PIN de 6 dígitos</div>'+
+      '<div class="fld">nombre@jaoproyectos.com</div>'+
+      '<div class="dot-line" id="pins"><span class="pd"></span><span class="pd"></span><span class="pd"></span><span class="pd"></span><span class="pd"></span><span class="pd"></span></div>'+
+      '<div class="keys">'+[1,2,3,4,5,6,7,8,9].map(function(n){return '<button>'+n+'</button>';}).join('')+'<button>·</button><button>0</button><button>⌫</button></div>'+
+      '<button class="btn gold" id="hsLogin" style="margin-top:10px">Entrar 🔒</button>'+
+    '</div></div>';
+}
+function sesCard(no, titulo, sub, badge){
+  return '<div class="sescard"><div class="badge">'+badge+'</div><div class="no">'+no+'</div><div class="gl"></div><h2>'+titulo+'</h2><p>'+sub+'</p></div>';
+}
+
+var SCENES=[
+/* 0 — Conoce Aurora */
+{ navy:true, raw:true, ses:'Conoce Aurora', screen:sesCard('01','Conoce Aurora','Una clínica pensada para tu confianza.','15 años cuidándote'), steps:[
+  { say:'Hola, soy <b>Aurora</b>. Déjame enseñarte algo en 60 segundos… que cambiará tu clínica.' },
+  { say:'Esto es lo que ve tu paciente al entrar. Una clínica que ya inspira <b>confianza</b>.', adv:'El 75% decide si confía en ti en los 3 primeros segundos de tu web.' },
+]},
+/* 1 — Inicio app paciente */
+{ ses:'En la app', screen:appShell('Clínica Aurora','Tu mejor versión',
+  '<div class="card" style="background:#F5EBE4;border-color:#ecd9c8"><div class="h">Hola, Laura 👋</div><div class="sub">¿Qué quieres mejorar hoy?</div></div>'+
+  '<div class="kpi"><div class="k" id="hsTrat"><div class="v">🦷</div><div class="l">Tratamientos</div></div><div class="k"><div class="v">✨</div><div class="l">Antes / Después</div></div><div class="k"><div class="v">💳</div><div class="l">Financiación</div></div><div class="k"><div class="v">📅</div><div class="l">Pedir cita</div></div></div>'+
+  '<div class="card" style="margin-top:11px"><div class="row"><div><div class="tag">Novedad</div><div class="h" style="font-size:14px">Ortodoncia invisible −20%</div></div><span class="pill gold">Ver</span></div></div>',0,'emp'), steps:[
+  { say:'Mira qué fácil. Tu paciente <b>toca</b> y descubre todo lo que ofreces.', hot:'#hsTrat', hint:'Tratamientos' },
+]},
+/* 2 — Tratamientos */
+{ ses:'En la app', screen:appShell('Tratamientos','4 especialidades',
+  '<div class="seg" style="margin-bottom:11px"><b class="on">Todos</b><b>Dental</b><b>Estética</b></div>'+
+  '<div class="card"><div class="row"><div class="row" style="justify-content:flex-start;gap:9px"><div style="font-size:26px">🦷</div><div><div class="h" style="font-size:14px">Implantes dentales</div><div class="sub">Recupera tu sonrisa</div></div></div><span class="pill gold">desde 690€</span></div></div>'+
+  '<div class="card" id="hsOrto" style="border:1.5px solid var(--gold);box-shadow:0 6px 18px rgba(201,162,75,.22)"><div class="row"><div class="row" style="justify-content:flex-start;gap:9px"><div style="font-size:26px">😬</div><div><div class="tag">Popular</div><div class="h" style="font-size:14px">Ortodoncia invisible</div><div class="sub">Alinea sin que se note</div></div></div><span class="pill gold">49€/mes</span></div></div>'+
+  '<div class="card"><div class="row"><div class="row" style="justify-content:flex-start;gap:9px"><div style="font-size:26px">💆‍♀️</div><div><div class="h" style="font-size:14px">Estética facial</div><div class="sub">Resultados naturales</div></div></div><span class="pill gold">desde 180€</span></div></div>'+
+  '<div class="card"><div class="row"><div class="row" style="justify-content:flex-start;gap:9px"><div style="font-size:26px">🦷✨</div><div><div class="h" style="font-size:14px">Blanqueamiento</div><div class="sub">Más blanco en 1 sesión</div></div></div><span class="pill gold">desde 240€</span></div></div>',1,'emp'), steps:[
+  { say:'<b>Implantes dentales</b>. Recuperar tu sonrisa sin que se note. Todo explicado, sin letra pequeña.' },
+  { say:'Y la favorita de todos: <b>ortodoncia invisible</b>. Alinea tus dientes sin que nadie lo vea.', adv:'El 68% de los adultos quiere alinearse pero teme los brackets metálicos.', hot:'#hsOrto', hint:'Ver' },
+  { say:'También cuidamos tu piel: <b>estética facial</b>. Naturalidad, nunca exageración.' },
+]},
+/* 3 — Antes / Después */
+{ ses:'En la app', screen:appShell('Antes / Después','Casos reales',
+  '<div class="seg" style="margin-bottom:11px"><b class="on">Sonrisa</b><b>Facial</b><b>Blanqueamiento</b></div>'+
+  '<div class="row" style="gap:10px;align-items:stretch"><div class="card" style="flex:1;text-align:center;margin-bottom:0"><span class="pill">Antes</span><div style="font-size:48px;margin:10px 0">😟</div></div><div class="card" style="flex:1;text-align:center;margin-bottom:0;background:#F5EBE4;border-color:#ecd9c8"><span class="pill gold">Después</span><div style="font-size:48px;margin:10px 0">😁</div></div></div>'+
+  '<div style="position:relative;margin:16px 0"><div class="prog" style="height:8px"><i style="width:55%"></i></div><div id="hsSlider" style="position:absolute;top:50%;left:55%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e0bd6e);box-shadow:0 3px 10px rgba(0,0,0,.3);border:2px solid #fff"></div></div>'+
+  '<div class="card"><div style="color:var(--gold);letter-spacing:1px">★★★★★</div><div class="sub" style="margin-top:4px">«No reconozco mi sonrisa, gracias Aurora» — Laura M.</div></div>',2,'emp'), steps:[
+  { say:'Pero las palabras no convencen… <b>esto</b> sí.', adv:'El antes/después es lo más visto de toda tu web. Es tu mejor vendedor.', hot:'#hsSlider', hint:'Desliza' },
+  { say:'Tu paciente lo ve con sus propios ojos. Y piensa: <b>«yo quiero eso»</b>.' },
+]},
+/* 4 — Financiación */
+{ ses:'En la app', screen:appShell('Financiación','A tu medida',
+  '<div class="card" style="background:#F5EBE4;border-color:#ecd9c8;text-align:center"><div class="tag">0% interés</div><div class="bignum" style="color:var(--navy);font-size:40px;margin:4px 0"><span class="count" data-to="49" data-suf="€/mes">0€/mes</span></div><div class="sub">Ortodoncia invisible · 18 cuotas</div><div class="prog" style="margin-top:10px"><i class="growbar" data-w="100%" style="width:0"></i></div></div>'+
+  '<div class="seg" style="justify-content:center;margin-bottom:11px"><b>12 meses</b><b class="on">18 meses</b><b>24 meses</b></div>'+
+  '<div class="row" style="gap:7px"><span class="pill">🪙 Sin entrada</span><span class="pill">📄 Sin papeleo</span><span class="pill">⚡ 24h</span></div>'+
+  '<button class="btn gold" id="hsCuota" style="margin-top:12px">Calcular mi cuota 💳</button>',1,'emp'), steps:[
+  { say:'¿Y el precio? Tranquilo. Aquí se paga <b>cómodo, en cuotas y sin intereses</b>.', adv:'El precio es la excusa nº1 para no pedir cita. Quítala y reservan.', hot:'#hsCuota', hint:'Calcular' },
+  { say:'Lo ve claro, lo ve posible… y deja de tener miedo a preguntar.' },
+]},
+/* 5 — Pedir cita */
+{ ses:'En la app', screen:appShell('Reserva tu cita','Elige día y hora',
+  '<div class="card"><div class="sub" style="margin-bottom:6px">Elige el día</div><div class="seg"><b>Lun 24</b><b>Mar 25</b><b class="on">Mié 26</b><b>Jue 27</b></div><div class="sub" style="margin:11px 0 6px">Elige la hora</div><div class="seg"><b>09:00</b><b>10:30</b><b class="on">12:00</b><b>16:30</b><b style="opacity:.4;text-decoration:line-through">18:00</b></div></div>'+
+  '<div class="fld">🦷 Ortodoncia invisible · Primera visita gratis 🎁</div>'+
+  '<button class="btn gold" id="hsReservar">Reservar cita ✅</button>',3,'emp'), steps:[
+  { say:'Y ahora, la magia. Pedir cita en <b>10 segundos</b>. Sin llamar, sin esperar.', adv:'El 40% de las citas se piden fuera del horario de teléfono. De noche, en el sofá.' },
+  { say:'Eliges tratamiento… y un día que te venga bien. Así de simple.', hot:'#hsReservar', hint:'Reservar' },
+]},
+/* 6 — Confirmación */
+{ ses:'En la app', screen:appShell('Tu cita','Confirmada',
+  '<div class="card" style="background:#F5EBE4;border-color:#ecd9c8"><div class="tag">Tu cita</div><div class="row" style="margin-top:6px"><span class="sub">📅 Día</span><b>Miércoles 26 · 12:00</b></div><div class="row"><span class="sub">🦷 Motivo</span><b style="font-size:13px">Ortodoncia · 1ª visita</b></div><div class="row"><span class="sub">📍 Lugar</span><b style="font-size:13px">C/ Serrano 21</b></div><div class="row"><span class="sub">👩‍⚕️ Doctora</span><b style="font-size:13px">Dra. Elena Ruiz</b></div><div class="line"></div><div class="row" style="gap:7px"><span class="pill ok">Recordatorio 🔔</span><span class="pill blue">Añadir al calendario</span></div></div>'+
+  '<button class="btn ghost" style="margin-top:4px">Ver mis citas</button>',3,'emp'), toast:'✅ ¡Cita confirmada! Te esperamos', steps:[
+  { say:'¡Y listo! Mira… le llega al móvil como un <b>WhatsApp</b>.', toast:true },
+]},
+/* 7 — El número (dueño) */
+{ navy:true, raw:true, ses:'Lo que vale', screen:'<div class="impact" style="justify-content:flex-start;padding-top:20px;overflow-y:auto">'+
+  '<div class="kick">Lo que Aurora consigue</div>'+
+  '<div class="lead">Hablemos de ti, el dueño.</div>'+
+  '<div class="bignum gold"><span class="count" data-to="38" data-suf="%">0%</span></div>'+
+  '<div class="unit">más citas online · mismo tráfico</div>'+
+  '<div style="margin-top:16px"><div class="plabel" style="color:#cfe6e1"><span>Citas que se reservan solas</span></div><div class="prog" style="background:rgba(255,255,255,.12)"><i class="growbar" data-w="85%" style="width:0"></i></div>'+
+  '<div class="plabel" style="color:#cfe6e1;margin-top:10px"><span>Menos ausencias (recordatorios)</span></div><div class="prog" style="background:rgba(255,255,255,.12)"><i class="growbar" data-w="64%" style="width:0"></i></div></div>'+
+  '<div class="cmp" style="margin-top:16px"><div class="c"><div class="cl">Extra al mes</div><div class="bignum" style="font-size:23px;margin:0"><span class="count" data-to="2300" data-suf="€">0€</span></div></div><div class="c"><div class="cl">Horas/semana</div><div class="bignum" style="font-size:23px;margin:0"><span class="count" data-to="12" data-suf="h">0h</span></div></div><div class="c"><div class="cl">Valoración</div><div class="bignum" style="font-size:23px;margin:0">4,9★</div></div></div>'+
+  '<div class="fnote">*Estimación: conversión media de clínicas 2-3%, mejora típica de demos interactivas +38%, valor medio de paciente ≈1.200€.</div>'+
+  '</div>', steps:[
+  { say:'Ahora hablemos de <b>ti</b>, el dueño. Voy a enseñarte lo que esto vale.' },
+  { say:'De cada <b>100 personas</b> que entran en tu web hoy… solo 2 ó 3 piden cita. Las demás se van.', adv:'Conversión web típica de una clínica: 2-3%. El resto se pierde en silencio.' },
+  { say:'Con una demo como esta, las visitas que pasan a la acción suben un <b>38%</b>. Más citas, mismo tráfico.' },
+  { say:'Si un paciente te deja de media <b>1.200€</b>… eso son cientos de euros <b>cada mes</b> que hoy se escapan.', adv:'Valor medio de un paciente de implantes u ortodoncia: 1.000-1.500€.' },
+]},
+/* 8 — Emocional */
+{ navy:true, raw:true, ses:'Más que una sonrisa', screen:'<div class="impact" style="justify-content:center;text-align:center">'+
+  '<div style="font-size:46px;margin-bottom:12px">🌅</div>'+
+  '<div class="kick" style="align-self:center">Más que una sonrisa</div>'+
+  '<div class="bignum" style="font-size:21px;line-height:1.45;max-width:280px;margin:0 auto;font-weight:700">Vendes <span style="color:#e0bd6e">confianza en uno mismo</span>.</div>'+
+  '</div>', steps:[
+  { say:'Pero esto no va solo de números.' },
+  { say:'Va de la persona que por fin <b>sonríe sin taparse</b> la boca.' },
+  { say:'De llegar a una entrevista, a una cita… y dar la <b>mejor primera impresión</b>.' },
+  { say:'Tú no vendes tratamientos. Vendes <b>confianza en uno mismo</b>. Y eso no tiene precio.' },
+]},
+/* 9 — Cierre */
+{ navy:true, raw:true, ses:'Tu clínica', screen:'<div class="impact" style="justify-content:center">'+
+  '<div class="logo-mark" style="width:48px;height:48px;font-size:24px;margin-bottom:12px">A</div>'+
+  '<div class="bignum" style="font-size:24px;line-height:1.2">Tu clínica, a otro nivel ✨</div>'+
+  '<div class="sub" style="color:#e0bd6e;margin:6px 0 14px">Una demo como esta, con tu marca, en días.</div>'+
+  '<div class="row" style="justify-content:flex-start;gap:8px;margin-bottom:7px"><span style="font-size:16px">⚡</span><span style="color:#e6edf3;font-size:13px;font-weight:600">Pacientes que reservan solos 24/7</span></div>'+
+  '<div class="row" style="justify-content:flex-start;gap:8px;margin-bottom:7px"><span style="font-size:16px">🔔</span><span style="color:#e6edf3;font-size:13px;font-weight:600">Menos ausencias con recordatorios</span></div>'+
+  '<div class="row" style="justify-content:flex-start;gap:8px;margin-bottom:7px"><span style="font-size:16px">💳</span><span style="color:#e6edf3;font-size:13px;font-weight:600">Financiación que cierra más casos</span></div>'+
+  '<div class="trust"><span>🔒 RGPD</span><span>☁️ Sin instalar</span><span>🎨 A medida</span><span>🌐 Multi-idioma</span></div>'+
+  '<button class="btn gold" id="hsDemo" style="margin-top:14px">Pídeme mi demo 🚀</button>'+
+  '</div>', steps:[
+  { say:'Esto puede estar en <b>tu</b> web mañana. Con tu nombre, tus casos, tu voz.', hot:'#hsDemo', hint:'Quiero esto' },
+  { say:'Hecho a medida, sin instalar nada, listo en días. Tú a lo tuyo: cuidar pacientes.', adv:'RGPD ✓ · Sin instalar ✓ · Hecho a medida ✓ · Multi-idioma ✓' },
+]},
+];
+
+(function(){ var n=0; SCENES.forEach(function(sc){ sc.steps.forEach(function(st){ st.aud=n++; }); }); })();
+var scr=document.getElementById('scr'), nextBtn=document.getElementById('next');
+var pfill=document.getElementById('pfill'), pcount=document.getElementById('pcount'), psession=document.getElementById('psession');
+var si=0, ti=0, timer=null, lifeTimer=null;
+function updateProg(){ var pct=Math.round(((si+1)/SCENES.length)*100); pfill.style.width=pct+'%'; pcount.textContent=(si+1)+' / '+SCENES.length; psession.textContent=SCENES[si].ses||'Recorrido'; }
+function clearTimer(){ if(timer){clearTimeout(timer);timer=null;} }
+function fmtNum(n){ return n.toLocaleString('es-ES'); }
+function easeOut(p){ return 1-Math.pow(1-p,3); }
+function animateStats(){
+  scr.querySelectorAll('.count').forEach(function(el){
+    var to=parseFloat(el.getAttribute('data-to'))||0, suf=el.getAttribute('data-suf')||'', steps=32, i=0;
+    el.textContent='0'+suf;
+    var iv=setInterval(function(){ i++; var p=i/steps; el.textContent=fmtNum(Math.floor(to*easeOut(p)))+suf; if(i>=steps){ el.textContent=fmtNum(to)+suf; clearInterval(iv); } },38);
+    setTimeout(function(){ el.textContent=fmtNum(to)+suf; clearInterval(iv); },1600);
+  });
+  scr.querySelectorAll('.growbar').forEach(function(el){ var w=el.getAttribute('data-w'); el.style.width='0%'; setTimeout(function(){ el.style.transition='width 1.2s cubic-bezier(.22,.61,.36,1)'; el.style.width=w; },70); });
+}
+function clearHot(){ var a=scr.querySelector('.armed'); if(a){a.classList.remove('armed'); a.onclick=null;} var h=document.getElementById('taphint'); if(h)h.remove(); }
+function armHot(sel,hint){
+  var el=scr.querySelector(sel); if(!el) return;
+  el.classList.add('armed'); el.style.position=el.style.position||'relative';
+  var t=document.createElement('div'); t.className='taphint'; t.id='taphint'; t.textContent='👆 '+(hint||'Toca'); el.appendChild(t);
+  el.onclick=function(e){ if(e)e.stopPropagation(); clearTimer(); clearHot(); goNext(); };
+}
+function pinEnter(done){
+  var dots=scr.querySelectorAll('#pins .pd'), i=0;
+  var iv=setInterval(function(){
+    if(i<dots.length){ dots[i].classList.add('f'); i++; }
+    else { clearInterval(iv); var b=scr.querySelector('#hsLogin');
+      if(b){ b.classList.add('armed'); setTimeout(function(){ b.textContent='Entrando…'; setTimeout(function(){done&&done();},700); },320); }
+      else done&&done(); }
+  },210);
+}
+function renderScene(){
+  var sc=SCENES[si];
+  scr.className='scr fade'+((sc.navy||sc.raw)?' navy':'');
+  scr.innerHTML=sc.screen;
+  if(sc.toast){ var t=document.createElement('div'); t.className='toast'; t.id='scn-toast'; t.style.display='none'; t.innerHTML='<b>🟢</b> '+sc.toast; scr.appendChild(t); }
+  if(lifeTimer){ clearTimeout(lifeTimer); lifeTimer=null; }
+  animateStats();
+  ti=0; updateProg(); runStep();
+}
+function lifeShow(only){
+  var lps=scr.querySelectorAll('.lp');
+  lps.forEach(function(v,i){ if(i===only){ v.classList.add('on'); try{ v.currentTime=0; var pp=v.play(); if(pp&&pp.catch)pp.catch(function(){}); }catch(e){} } else { v.classList.remove('on'); try{v.pause();}catch(e){} } });
+}
+function runStep(){
+  var sc=SCENES[si], st=sc.steps[ti];
+  clearHot(); clearTimer();
+  if(sc.life){
+    if(lifeTimer){ clearTimeout(lifeTimer); lifeTimer=null; }
+    if(ti===0){ lifeShow(0); }                              // agobio mientras habla del papeleo
+    else { var order=[1,2,3], j=0; var tick=function(){ lifeShow(order[j]); j=(j+1)%order.length; lifeTimer=setTimeout(tick,3200); }; tick(); }  // vida cuando habla de la vida
+  }
+  say(st.say, st.adv); nextBtn.disabled=false;
+  if(st.toast){ var tt=scr.querySelector('#scn-toast'); if(tt) setTimeout(function(){tt.style.display='flex';},700); }
+  playLine(st.aud, st.say, function(){
+    if(st.hot){ armHot(st.hot, st.hint); timer=setTimeout(goNext, 7000); }
+    else if(st.pin){ pinEnter(goNext); }
+    else if(st.reveal){ var e=scr.querySelector(st.reveal); if(e)e.style.display='block'; timer=setTimeout(goNext, 1000); }
+    else { timer=setTimeout(goNext, 850); }
+  });
+}
+function goNext(){
+  clearTimer();
+  var sc=SCENES[si];
+  if(ti < sc.steps.length-1){ ti++; runStep(); }
+  else if(si < SCENES.length-1){ si++; renderScene(); }
+  else finish();
+}
+function finish(){ nextBtn.textContent='Reiniciar ↺'; jstate.textContent='fin'; }
+nextBtn.onclick=function(){
+  if(si===SCENES.length-1 && ti===SCENES[si].steps.length-1){ restart(); return; }
+  try{speechSynthesis.cancel();}catch(e){} try{voxEl.pause();}catch(e){} talking(false); goNext();
+};
+function restart(){ clearTimer(); si=0; ti=0; nextBtn.textContent='Siguiente ▸'; bubble.classList.add('empty'); document.getElementById('intro').style.display='flex'; try{speechSynthesis.cancel();}catch(e){} try{voxEl.pause();}catch(e){} talking(false); }
+document.getElementById('restart').onclick=restart;
+document.getElementById('startBtn').onclick=function(){
+  document.getElementById('intro').style.display='none';
+  si=0; renderScene();
+};
+updateProg();
+</script>
+</body>
+</html>
