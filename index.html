@@ -55,7 +55,7 @@ body{background:#06140f;color:#fff;overflow:hidden;display:flex;align-items:cent
 .island{position:absolute;left:50%;top:7px;transform:translateX(-50%);width:78px;height:17px;background:#000;border-radius:11px}
 .scr{flex:1;overflow:hidden;position:relative;background:var(--g-fondo);display:flex;flex-direction:column}
 .scr.navy{background:radial-gradient(120% 72% at 50% 0,#1c5450 0,#0E3A3A 58%,#0a2e2c 100%)}
-.fade{animation:fade .6s ease}
+.fade{animation:fade .42s ease}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 
 .appbar{background:var(--navy);color:#fff;padding:11px 14px 12px;display:flex;align-items:center;gap:9px;flex:0 0 auto}
@@ -284,7 +284,7 @@ function sesCard(no, titulo, sub, badge){
 var SCENES=[
 /* 0 — Conoce Aurora */
 { navy:true, raw:true, ses:'Conoce Aurora', screen:sesCard('01','Conoce Aurora','Una clínica pensada para tu confianza.','15 años cuidándote'), steps:[
-  { say:'Hola, soy <b>Aurora</b>. Déjame enseñarte algo en 60 segundos… que cambiará tu clínica.' },
+  { say:'Soy <b>Aurora</b>. Ahora mismo, tu web deja escapar pacientes cada día… deja que te enseñe a recuperarlos.' },
   { say:'Esto es lo que ve tu paciente al entrar. Una clínica que ya inspira <b>confianza</b>.', adv:'El 75% decide si confía en ti en los 3 primeros segundos de tu web.' },
 ]},
 /* 1 — Inicio app paciente */
@@ -308,7 +308,7 @@ var SCENES=[
 /* 3 — Antes / Después */
 { ses:'En la app', screen:appShell('Antes / Después','Casos reales',
   '<div class="seg" style="margin-bottom:11px"><b class="on">Sonrisa</b><b>Facial</b><b>Blanqueamiento</b></div>'+
-  '<div class="row" style="gap:10px;align-items:stretch"><div class="card" style="flex:1;text-align:center;margin-bottom:0"><span class="pill">Antes</span><div style="font-size:48px;margin:10px 0">😟</div></div><div class="card" style="flex:1;text-align:center;margin-bottom:0;background:#F5EBE4;border-color:#ecd9c8"><span class="pill gold">Después</span><div style="font-size:48px;margin:10px 0">😁</div></div></div>'+
+  '<div class="row" style="gap:10px;align-items:stretch"><div style="flex:1;border-radius:16px;padding:14px;text-align:center;background:linear-gradient(160deg,#eef1f0,#d8e1df);box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)"><span class="pill">Antes</span><div style="font-size:44px;margin:12px 0 6px">😕</div><div class="sub" style="font-size:11px">Dientes apiñados</div></div><div style="flex:1;border-radius:16px;padding:14px;text-align:center;background:linear-gradient(160deg,#FBF3DE,#EFDCB8);box-shadow:0 8px 20px rgba(201,162,75,.25)"><span class="pill gold">Después</span><div style="font-size:44px;margin:12px 0 6px">😁</div><div class="sub" style="font-size:11px;color:#7a611a">Sonrisa alineada</div></div></div>'+
   '<div style="position:relative;margin:16px 0"><div class="prog" style="height:8px"><i style="width:55%"></i></div><div id="hsSlider" style="position:absolute;top:50%;left:55%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e0bd6e);box-shadow:0 3px 10px rgba(0,0,0,.3);border:2px solid #fff"></div></div>'+
   '<div class="card"><div style="color:var(--gold);letter-spacing:1px">★★★★★</div><div class="sub" style="margin-top:4px">«No reconozco mi sonrisa, gracias Aurora» — Laura M.</div></div>',2,'emp'), steps:[
   { say:'Pero las palabras no convencen… <b>esto</b> sí.', adv:'El antes/después es lo más visto de toda tu web. Es tu mejor vendedor.', hot:'#hsSlider', hint:'Desliza' },
@@ -437,10 +437,10 @@ function runStep(){
   say(st.say, st.adv); nextBtn.disabled=false;
   if(st.toast){ var tt=scr.querySelector('#scn-toast'); if(tt) setTimeout(function(){tt.style.display='flex';},700); }
   playLine(st.aud, st.say, function(){
-    if(st.hot){ armHot(st.hot, st.hint); timer=setTimeout(goNext, 7000); }
+    if(st.hot){ armHot(st.hot, st.hint); timer=setTimeout(goNext, 2300); }
     else if(st.pin){ pinEnter(goNext); }
-    else if(st.reveal){ var e=scr.querySelector(st.reveal); if(e)e.style.display='block'; timer=setTimeout(goNext, 1000); }
-    else { timer=setTimeout(goNext, 850); }
+    else if(st.reveal){ var e=scr.querySelector(st.reveal); if(e)e.style.display='block'; timer=setTimeout(goNext, 520); }
+    else { timer=setTimeout(goNext, 340); }
   });
 }
 function goNext(){
