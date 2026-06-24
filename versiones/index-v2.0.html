@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Clínica Aurora · Dental & Estética — Demo (v2.1)</title>
+<title>Clínica Aurora · Dental & Estética — Demo (v2.0)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -170,7 +170,7 @@ body{background:#06140f;color:#fff;overflow:hidden;display:flex;align-items:cent
 <body>
 <div id="amb"></div>
 <div id="stage">
-  <div class="vtag">Aurora v2.1</div>
+  <div class="vtag">Aurora v2.0</div>
   <div class="jbar">
     <div class="javatar" id="jav">✨</div>
     <div class="jmeta">
@@ -191,8 +191,8 @@ body{background:#06140f;color:#fff;overflow:hidden;display:flex;align-items:cent
         <div class="kick">Clínica Aurora · Dental &amp; Estética</div>
         <h1>Tu mejor versión<br>empieza <b>aquí</b>.</h1>
         <p>Te lo enseño en 60 segundos. Yo te guío con la voz — tú solo toca cuando te lo pida.</p>
-        <button class="start" id="startB">▶ Versión B · «pierdes pacientes»</button><button class="start" id="startA" style="margin-top:12px;background:transparent;border:1.6px solid rgba(201,162,75,.55);color:#e0bd6e;box-shadow:none">▶ Versión A · «más pacientes»</button>
-        <div class="small">Con sonido · ~90 seg · hecho a medida · v2.1</div>
+        <button class="start" id="startBtn">Comenzar el tour ✨</button>
+        <div class="small">Con sonido · ~90 seg · hecho a medida · v2.0</div>
       </div>
     </div>
   </div>
@@ -209,7 +209,7 @@ var LOGO_BAR='<span class="logo-mark">A</span>';
 var LOGO_BIG='<img src="'+LOGO_JAO+'" alt="JAO" style="height:66px;border-radius:14px;margin-bottom:8px;box-shadow:0 6px 18px rgba(0,0,0,.35)">';
 
 /* ===== VOZ ===== */
-var muted=false, voice=null, HOOK='B';
+var muted=false, voice=null;
 function loadVoices(){
   var vs=speechSynthesis.getVoices(); if(!vs.length) return;
   var prefer=['Mónica','Monica','Paulina','Marisol','Google español de Estados Unidos','Google español','Microsoft Helena','Microsoft Sabina','Microsoft Laura','Jimena','Lucía','Lucia'];
@@ -245,7 +245,7 @@ function playLine(idx, text, cb){
   voxEl.onended=fin;
   voxEl.onerror=fallback;
   try{
-    voxEl.src=(idx===0&&HOOK==='A')?'voz/0a.mp3':'voz/'+idx+'.mp3'; voxEl.currentTime=0;
+    voxEl.src='voz/'+idx+'.mp3'; voxEl.currentTime=0;
     var p=voxEl.play();
     if(p&&p.catch) p.catch(function(){ fallback(); });
   }catch(e){ fallback(); }
@@ -459,11 +459,10 @@ nextBtn.onclick=function(){
 };
 function restart(){ clearTimer(); si=0; ti=0; nextBtn.textContent='Siguiente ▸'; bubble.classList.add('empty'); document.getElementById('intro').style.display='flex'; try{speechSynthesis.cancel();}catch(e){} try{voxEl.pause();}catch(e){} talking(false); }
 document.getElementById('restart').onclick=restart;
-var HOOK_B='Soy <b>Aurora</b>. Ahora mismo, tu web deja escapar pacientes cada día… deja que te enseñe a recuperarlos.';
-var HOOK_A='Soy <b>Aurora</b>. En 60 segundos verás cómo tu web puede convertir muchas más visitas en pacientes. Empecemos.';
-function startTour(h){ HOOK=h; if(SCENES[0]&&SCENES[0].steps[0]) SCENES[0].steps[0].say=(h==='A')?HOOK_A:HOOK_B; document.getElementById('intro').style.display='none'; si=0; ti=0; renderScene(); }
-var _sA=document.getElementById('startA'); if(_sA) _sA.onclick=function(){ startTour('A'); };
-var _sB=document.getElementById('startB'); if(_sB) _sB.onclick=function(){ startTour('B'); };
+document.getElementById('startBtn').onclick=function(){
+  document.getElementById('intro').style.display='none';
+  si=0; renderScene();
+};
 updateProg();
 </script>
 </body>
